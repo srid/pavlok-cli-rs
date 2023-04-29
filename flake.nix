@@ -1,24 +1,23 @@
 {
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
-    flake-compat = {
-      url = "github:edolstra/flake-compat";
-      flake = false;
-    };
-    nci.url = "github:yusdacra/nix-cargo-integration";
-    nci.inputs.nixpkgs.follows = "nixpkgs";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    flake-parts.url = "github:hercules-ci/flake-parts";
+    systems.url = "github:nix-systems/default";
   };
 
-  outputs = { self, nixpkgs, nci, ... }:
-    nci.lib.makeOutputs {
-      # Documentation and examples:
-      # https://github.com/yusdacra/rust-nix-templater/blob/master/template/flake.nix
-      root = ./.;
-      overrides = {
-        shell = common: prev: {
-          packages = prev.packages ++ [
-            common.pkgs.rust-analyzer
-            common.pkgs.cargo-watch
+  outputs = inputs:
+    inputs.flake-parts.lib.mkFlake { inherit inputs; } {
+      systems = import inputs.systems;
+      perSystem = { pkgs, ... }: {
+        # TODO: Package it!
+        devShells.default = pkgs.mkShell {
+          nativeBuildInputs = with pkgs; [
+            rustc
+            cargo
+            darwin.apple_sdk.frameworks.Security
+            pkgconfig
+            openssl
+            iconv
           ];
         };
       };

@@ -1,0 +1,5 @@
+
+```
+curl -d '{"access_token":"b915a723b9ea08fa305fdd7b89372891f64133e38dea84f49168dcbb21c34185"}' -H "Content-Type: application/json" -X POST \
+    https://app.pavlok.com/api/v1/stimuli/led/3
+```
